@@ -1,0 +1,93 @@
+//<스택 (후위 표기식)>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_STACK_SIZE 100
+
+typedef int element;
+element data[MAX_STACK_SIZE];
+int top;
+
+void init_stack() { /*** Fill the code  ***/
+    top = -1;
+}
+int is_empty() { /*** Fill the code  ***/
+    return top == -1;
+}
+int is_full() { /*** Fill the code  ***/
+    return top == MAX_STACK_SIZE-1;
+}
+int size() { /*** Fill the code  ***/
+    return top+1;
+}
+void push(element item)
+{
+	/*** Fill the code  ***/
+    data[++top]=item;
+}
+element pop()
+{
+	/*** Fill the code  ***/
+    if(!is_empty()){
+        return data[top--];
+    }
+    return -1;
+}
+element peek()
+{
+	/*** Fill the code  ***/
+    if (!is_empty()){
+        return data[top];
+    }
+    return -1;
+    
+}
+
+ /****************
+ 
+ 필요한 함수 추가 가능
+ ** Fill the code  **
+ 
+ ****************/
+
+int eval(char exp[]) 
+{
+    /*** Fill the code  ***/
+    char *token = strtok(exp, " ");
+    while (token != NULL) {
+        if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
+            push(atoi(token));
+        }
+        else { 
+            int op1 = pop();
+            int op2 = pop();
+            switch(token[0]) {
+                case '*' : push(op2 * op1); break;
+                case '+' : push(op2 + op1); break;
+                case '-' : push(op2 - op1); break;
+                case '/' : push(op2 / op1);  break;
+            }
+        }
+        token = strtok(NULL, " ");
+    }
+    return pop();
+}
+
+int main() {
+    int i =0;
+    char t = 0;
+	char in[1000] = { 0 };
+	char post[1000] = { 0 };
+    
+    //input string
+    while ((t = getchar()) != EOF)
+		in[i++] = t;
+	in[i] = '\0';
+
+    //output
+	printf("%d\n", eval(in));
+
+	return 0;
+}
