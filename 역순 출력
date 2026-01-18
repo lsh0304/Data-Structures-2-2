@@ -1,0 +1,26 @@
+//<역순 출력>
+#include <stdio.h>
+
+void reverse(int num);
+
+int main(void) {
+    int num;
+    
+    scanf("%d", &num);
+    
+    reverse(num);
+    
+    return 0;
+}
+
+void reverse(int num)
+{
+    /*TODO*/
+    if(num<=0){
+        return;
+    }
+    else{
+        printf("%d", num%10);
+        reverse(num/10);
+    }
+}
