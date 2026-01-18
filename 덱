@@ -1,0 +1,106 @@
+//<덱>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_QUEUE_SIZE 100
+#define Element int
+
+Element data[MAX_QUEUE_SIZE];
+
+int front;
+int rear;
+
+void error(char* str)
+{
+	fprintf(stderr, "%s\n", str);
+	exit(1);
+};
+
+void init_deque() { front=rear=0; }
+
+int is_empty() { return front==rear; }
+
+int is_full() { return (rear+1)%MAX_QUEUE_SIZE==front%MAX_QUEUE_SIZE; }
+
+int size() { return (rear-front+MAX_QUEUE_SIZE)%MAX_QUEUE_SIZE; }
+
+void add_rear(Element val) {
+    if(is_full()){
+        error("덱 포화 에러");
+    }
+    rear=(rear+1)%MAX_QUEUE_SIZE;
+    data[rear]=val;
+    /**************************/
+}
+
+Element delete_front() { 
+    if(is_empty()){
+        error("덱 공백 에러");
+    }
+    front=(front+1)%MAX_QUEUE_SIZE;
+    return data[front];
+    /**************************/ }
+
+Element get_front() { 
+    if(is_empty()){
+        error("덱 공백 에러");
+    }
+    return data[(front+1)%MAX_QUEUE_SIZE];
+    /**************************/ }
+
+void add_front(Element val)
+{
+	if (is_full())
+		error(" 덱 포화 에러");
+	/**************************/
+    data[front]=val;
+    front=(front-1+MAX_QUEUE_SIZE)%MAX_QUEUE_SIZE;
+	/**************************/
+}
+
+Element delete_rear()
+{
+	/**************************/
+    Element val;
+	if (is_empty())
+		error(" 덱 공백 에러");
+	/**************************/
+    val=data[rear];
+    rear=(rear-1+MAX_QUEUE_SIZE)%MAX_QUEUE_SIZE;
+	/**************************/
+	return val;
+    /**************************/
+}
+
+Element get_rear() {
+	if (is_empty())
+		error(" 덱 공백 에러");
+	return data[rear];
+    /**************************/
+}
+
+int main(void)
+{
+	Element num;
+	int n;
+	char c[15];
+	init_deque();
+	scanf("%d", &n);
+	for (int i = 0; i < n; i++)
+	{
+		scanf("%s", c);
+
+		if (strcmp(c, "addfront") == 0) { scanf("%d\n", &num); add_front(num); }
+		else if (strcmp(c, "deletefront") == 0)printf("%d\n", delete_front());
+		else if (strcmp(c, "addrear") == 0) { scanf("%d\n", &num); add_rear(num); }
+		else if (strcmp(c, "deleterear") == 0)printf("%d\n", delete_rear());
+		else if (strcmp(c, "getfront") == 0)printf("%d\n", get_front());
+		else if (strcmp(c, "getrear") == 0)printf("%d\n", get_rear());
+		else if (strcmp(c, "size") == 0) printf("%d\n", size());
+		else if (strcmp(c, "empty") == 0)printf("%d\n", is_empty());
+		else if (strcmp(c, "full") == 0)printf("%d\n", is_full());
+		else printf("error\n");
+	}
+	return 0;
+}
