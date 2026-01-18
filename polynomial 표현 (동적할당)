@@ -1,0 +1,55 @@
+//<polynomial 표현 (동적할당)>
+#include <stdio.h>
+#include <stdlib.h>
+
+// 다항식의 한 항을 나타내는 구조체: 계수(coef)와 차수(expon)
+typedef struct {
+    float coef;  // 항의 계수
+    int expon;   // 항의 차수 (지수)
+} Term;
+
+/**
+ * @brief 다항식을 출력하는 함수
+ * @param t     항들을 담은 배열
+ * @param size  배열의 길이 (항 개수)
+ *
+ */
+void print_poly(const Term *t, int size) {
+    // To Fill
+    for(int i = 0;i<size;i++){
+        if(t[i].coef!=0.0){
+            printf("%f x^%d", t[i].coef, t[i].expon);
+            if(i>=0&&i<size-1){
+                printf(" + ");
+            }
+        }
+    }
+}
+
+int main(void) {
+    Term *a;     // 동적 할당할 항 배열 포인터
+    int size;    // 다항식의 항 개수
+
+    // 1) 항 개수 입력 및 검증
+    if (scanf("%d", &size) != 1 || size <= 0) {
+        fprintf(stderr, "올바른 항 개수를 입력하세요.\n");
+        return 1;
+    }
+
+    // 2) 동적 메모리 할당
+        // To FILL
+    a = (Term*)malloc(sizeof(Term)*size);
+
+    // 3) 각 항의 차수와 계수 입력
+        // To FILL
+    for(int j = 0;j<size;j++){
+        scanf("%d %f", &a[j].expon, &a[j].coef);
+    }
+    
+    // 4) 다항식 출력
+    print_poly(a, size);
+
+    // 5) 메모리 반환
+    free(a);
+    return 0;
+}
