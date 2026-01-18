@@ -1,0 +1,137 @@
+//<polynomial 연산 (동적할당)>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define MAX_DEGREE 50
+
+typedef struct {
+    float coef;  // 계수
+    int expon;   // 차수
+} Term;
+
+/**
+ * 다항식 출력: 계수가 0이 아닌 항만 "coef x^expon" 형태로
+ */
+void print_poly(const Term *t, int size) {
+    // TO FILL
+    for(int i = 0;i<size;i++){
+        if(t[i].coef!=0.0){
+            printf("%f x^%d", t[i].coef, t[i].expon);
+            if(i>=0&&i<size-1){
+                printf(" + ");
+            }
+        }
+    }
+    printf("\n");
+}
+
+/**
+ * 다항식 평가: x 값 대입 후 결과 반환
+ */
+float poly_eval(const Term *t, int size, int x) {
+    // TO FILL
+    float result=0, cal=0;
+    for(int i=0;i<size;i++){
+        cal = t[i].coef;
+        for (int j=0;j<t[i].expon;j++){
+            cal *= x;
+        }
+        result += cal;
+    }
+    return result;
+}
+
+/**
+ * 다항식 덧셈: A + B를 계산하여 C에 저장
+ * - 입력: A, sizeA; B, sizeB
+ * - 출력: *C (동적 할당), *sizeC
+ */
+void poly_add(const Term *A, int sizeA,
+              const Term *B, int sizeB,
+              Term **C, int *sizeC)
+{
+    int i = 0, j = 0, k = 0;
+    *C = (Term *)malloc((sizeA + sizeB) * sizeof(Term));
+    if (*C == NULL) {
+        *sizeC = 0;
+        return;
+    }
+
+    while (i < sizeA && j < sizeB) {
+        if (A[i].expon > B[j].expon) {
+            (*C)[k++] = A[i++];
+        } else if (A[i].expon < B[j].expon) {
+            (*C)[k++] = B[j++];
+        } else {
+            float sum_coef = A[i].coef + B[j].coef;
+            if (sum_coef != 0.0) {
+                (*C)[k].coef = sum_coef;
+                (*C)[k].expon = A[i].expon;
+                k++;
+            }
+            i++;
+            j++;
+        }
+    }
+    
+    while (i < sizeA) {
+        (*C)[k++] = A[i++];
+    }
+    while (j < sizeB) {
+        (*C)[k++] = B[j++];
+    }
+
+    *sizeC = k;
+    
+    Term *temp = realloc(*C, k * sizeof(Term));
+    if (temp != NULL || k == 0) {
+        *C = temp;
+    }
+}
+
+int main(void) {
+    Term *A = NULL, *B = NULL, *S = NULL;
+    int sizeA, sizeB, sizeS;
+    int x;
+
+    // A 다항식 항 수 및 항 입력
+    scanf("%d", &sizeA);
+    A = malloc(sizeA * sizeof(Term));
+    for (int i = 0; i < sizeA; i++) {
+        scanf("%d %f", &A[i].expon, &A[i].coef);
+    }
+
+    // B 다항식 항 수 및 항 입력
+    scanf("%d", &sizeB);
+    B = malloc(sizeB * sizeof(Term));
+    for (int i = 0; i < sizeB; i++) {
+        scanf("%d %f", &B[i].expon, &B[i].coef);
+    }
+
+    // x 값 입력
+    scanf("%d", &x);
+
+    // A, B, A+B 출력
+    printf("A(x) = ");
+    print_poly(A, sizeA);
+
+    printf("B(x) = ");
+    print_poly(B, sizeB);
+
+    poly_add(A, sizeA, B, sizeB, &S, &sizeS);
+    printf("A(x)+B(x) = ");
+    print_poly(S, sizeS);
+
+    // 평가 결과 출력
+    printf("A(%d) = %f\n", x, poly_eval(A, sizeA, x));
+    printf("B(%d) = %f\n", x, poly_eval(B, sizeB, x));
+    printf("A(%d)+B(%d) = %f\n", x, x, poly_eval(S, sizeS, x));
+
+    // 메모리 해제
+    free(A);
+    free(B);
+    free(S);
+
+    return 0;
+}
