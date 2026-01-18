@@ -1,0 +1,23 @@
+//<combination>
+#include <stdio.h>
+
+int n_C_k(int n, int k);
+
+int main(void) {
+    int n, k;
+    scanf("%d %d", &n, &k);
+    printf("%d", n_C_k(n, k));
+    return 0;
+}
+
+int n_C_k(int n, int k)
+{
+    // 순환을 멈추는 부분
+    if(k==0||k==n){
+        return 1;
+    }
+    // 순환 호출을 하는 부분
+    else{
+        return n_C_k(n-1, k-1)+n_C_k(n-1, k);
+    }
+}
