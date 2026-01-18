@@ -1,0 +1,68 @@
+//<영역 채우기>
+#include <stdio.h>
+
+#define WHITE 0
+#define BLACK 1
+#define HEIGHT 10
+#define WIDTH  10
+
+// 10×10 화면을 나타내는 전역 배열
+int screen[HEIGHT][WIDTH] = {
+    {2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+    {2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+    {2, 2, 2, 0, 0, 0, 0, 2, 2, 2},
+    {2, 2, 2, 2, 0, 0, 0, 2, 2, 2},
+    {2, 2, 2, 2, 0, 0, 0, 2, 2, 2},
+    {2, 2, 2, 2, 0, 0, 0, 0, 2, 2},
+    {2, 2, 2, 2, 0, 2, 2, 2, 2, 2},
+    {2, 2, 2, 2, 0, 2, 2, 2, 2, 2},
+    {2, 2, 2, 2, 0, 2, 2, 2, 2, 2},
+    {2, 2, 2, 2, 2, 2, 2, 2, 2, 2}};
+
+/**
+ * @brief (x, y) 위치와 연결된 모든 흰색(WHITE) 영역을
+ * 검은색(BLACK)으로 채우는 재귀 함수
+ *
+ * @param x 행 좌표 (0 <= x < HEIGHT)
+ * @param y 열 좌표 (0 <= y < WIDTH)
+ */
+void flood_fill(int x, int y) {
+    // To Fill
+    if(x<0||x>9||y<0||y>9||screen[x][y]!=0)
+        return;
+    else{ 
+        screen[x][y] = 1;
+        flood_fill(x-1, y);
+        flood_fill(x+1, y);
+        flood_fill(x, y-1);
+        flood_fill(x, y+1);
+    }
+    
+}
+
+/**
+ * @brief 10×10 screen 배열을 출력
+ */
+void result_print(void) {
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+            printf("%d ", screen[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void) {
+    int startX, startY;
+
+    // 시작 좌표 입력 (n m)
+    scanf("%d %d", &startX, &startY);
+
+    // flood fill 수행
+    flood_fill(startX, startY);
+
+    // 결과 출력
+    result_print();
+
+    return 0;
+}
