@@ -1,0 +1,86 @@
+//<큐>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_QUEUE_SIZE 100
+#define Element int
+
+Element queue[MAX_QUEUE_SIZE];
+
+int front;
+int rear;
+
+void error(char *str)
+{
+    fprintf(stderr, "%s\n", str);
+    exit(1);
+};
+
+void init_queue() { /************************/ 
+    front=0;
+    rear=0;
+}
+int is_empty() { return rear==front; /************************/ }
+int is_full() { return (rear+1)%MAX_QUEUE_SIZE==front%MAX_QUEUE_SIZE; /************************/ }
+int size() { return rear-front; /************************/ }
+void enqueue(Element val)
+{
+    if (is_full()/************************/)
+        error("큐 포화 에러");
+    /************************/
+    else {
+        rear=(rear+1)%MAX_QUEUE_SIZE;
+        queue[rear]=val;
+    }
+    /************************/
+}
+Element dequeue()
+{
+    if (is_empty()/************************/)
+        error("큐 공백 에러");
+    /************************/
+    else {
+        front=(front+1)%MAX_QUEUE_SIZE;
+        return queue[front];
+    }
+    /************************/
+}
+Element peek()
+{
+    if (is_empty()/************************/)
+        error("큐 공백 에러");
+    return queue[(front+1)%MAX_QUEUE_SIZE];/************************/
+}
+
+int main(void)
+{
+    Element num;
+    int n;
+    char c[10];
+    init_queue();
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++)
+    {
+        scanf("%s", c);
+
+        if (strcmp(c, "enqueue") == 0)
+        {
+            scanf("%d\n", &num);
+            enqueue(num);
+        }
+        else if (strcmp(c, "dequeue") == 0)
+            printf("%d\n", dequeue());
+        else if (strcmp(c, "size") == 0)
+            printf("%d\n", size());
+        else if (strcmp(c, "empty") == 0)
+            printf("%d\n", is_empty());
+        else if (strcmp(c, "full") == 0)
+            printf("%d\n", is_full());
+        else if (strcmp(c, "peek") == 0)
+            printf("%d\n", peek());
+        else
+            printf("error\n");
+    }
+    return 0;
+}
