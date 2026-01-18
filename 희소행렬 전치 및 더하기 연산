@@ -1,0 +1,157 @@
+//<희소행렬 전치 및 더하기 연산>
+#include <stdio.h>
+#include <stdlib.h>
+
+// 희소 행렬에 있는 '0이 아닌 항' 하나를 표현하는 구조체
+typedef struct {
+    int row;    // 행 인덱스
+    int col;    // 열 인덱스
+    int value;  // 값
+} Term;
+
+// 희소 행렬 전체를 표현하는 구조체
+typedef struct {
+    int rows;    // 행렬의 전체 크기 (n x n)
+    int terms;   // 0이 아닌 항(Term)의 개수
+    Term *data;  // 0이 아닌 항들을 저장할 배열 (포인터)
+} SparseMatrix;
+
+/**
+ * 힙 메모리에 n×n 행렬을 0으로 초기화한 뒤 비제로 항만 채워 출력
+ */
+void print_matrix(const SparseMatrix *a) {
+    int n = a->rows;
+    int *mat = malloc(n * n * sizeof(int));
+
+    // 1) 0으로 초기화
+    for (int i = 0; i < n * n; i++) {
+        mat[i] = 0;
+    }
+
+    // 2) 비제로 항만 채워넣기
+    for (int k = 0; k < a->terms; k++) {
+        int r = a->data[k].row;
+        int c = a->data[k].col;
+        mat[r * n + c] = a->data[k].value;
+    }
+
+    // 3) 한 번에 출력
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%3d", mat[i * n + j]);
+        }
+        putchar('\n');
+    }
+    putchar('\n');
+
+    free(mat);
+}
+
+/**
+ *  전치 행렬 생성
+ */
+SparseMatrix transpose(const SparseMatrix *a) {
+    SparseMatrix t;
+    // To FILL
+    t.rows = a->rows;
+    t.terms = a->terms;
+    t.data = malloc(a->terms * sizeof(Term));
+    
+    for(int i=0;i<a->terms;i++){
+        t.data[i].row = a->data[i].col;
+        t.data[i].col = a->data[i].row;
+    }
+    return t;
+}
+
+/**
+ *  두 희소행렬 A, B를 더해 새로운 희소행렬 S를 반환
+ * 같은 위치의 항은 값을 합산하고, 0이 되면 생략.
+ */
+SparseMatrix add_sparse(const SparseMatrix *A, const SparseMatrix *B) {
+    // TO FILL
+    SparseMatrix S;
+    S.data = (Term *)malloc((A->terms + A->terms) * sizeof(Term));
+    S.terms = 0;
+    S.rows = A->rows;
+    
+    int i = 0, j = 0, k = 0;
+    
+     while (i < A->terms && j < B->terms) {
+        int posA = A->data[i].row * A->rows + A->data[i].col;
+        int posB = B->data[j].row * B->rows + B->data[j].col;
+
+        if (posA < posB) {
+            S.data[k++] = A->data[i++];
+        } 
+        else if (posA > posB) {
+            S.data[k++] = B->data[j++];
+        } 
+        else {
+            int sum = A->data[i].value + B->data[j].value;
+            if (sum != 0) {
+                S.data[k].row = A->data[i].row;
+                S.data[k].col = A->data[i].col;
+                S.data[k].value = sum;
+                k++;
+            }
+            i++;
+            j++;
+        }
+    }
+
+    while (i < A->terms) {
+        S.data[k++] = A->data[i++];
+    }
+    while (j < B->terms) {
+        S.data[k++] = B->data[j++];
+    }
+
+    S.terms = k;
+    return S;
+}
+
+int main(void) {
+    int n, num;
+    if (scanf("%d %d", &n, &num) != 2) {
+        fprintf(stderr, "입력 오류\n");
+        return 1;
+    }
+
+    SparseMatrix M;
+    M.rows  = n;
+    M.terms = num;
+    M.data  = malloc(num * sizeof(Term));
+    if (!M.data) {
+        perror("메모리 할당 실패");
+        return 1;
+    }
+
+    for (int i = 0; i < num; i++) {
+        if (scanf("%d %d %d",
+                  &M.data[i].row,
+                  &M.data[i].col,
+                  &M.data[i].value) != 3) {
+            fprintf(stderr, "입력 형식 오류\n");
+            free(M.data);
+            return 1;
+        }
+    }
+
+    // 1) 원본 출력
+    print_matrix(&M);
+
+    // 2) 전치 생성 및 출력
+    SparseMatrix T = transpose(&M);
+    print_matrix(&T);
+
+    // 3) 원본 + 전치 더하기 및 출력
+    SparseMatrix S = add_sparse(&M, &T);
+    print_matrix(&S);
+
+    // 해제
+    free(M.data);
+    free(T.data);
+    free(S.data);
+    return 0;
+}
